@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PowerCircuitX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background-color: #111;
+      color: white;
+      padding: 20px;
+    }
+    select, button {
+      font-size: 20px;
+      padding: 10px 20px;
+      margin: 10px 0;
+    }
+    #exercise { font-size: 32px; margin-top: 30px; }
+    #timer { font-size: 50px; margin-top: 20px; }
+    #progress { margin-top: 15px; font-size: 18px; }
+  </style>
+</head>
+<body>
+
+<h1>PowerCircuitX</h1>
+
+<label for="workoutType">Select Workout:</label>
+<select id="workoutType">
+  <option value="fullBody">Full-Body</option>
+  <option value="hiit">HIIT</option>
+  <option value="strength">Strength</option>
+  <option value="cardio">Cardio</option>
+</select>
+
+<br>
+<button onclick="startWorkout()">Start Workout</button>
+
+<div id="exercise"></div>
+<div id="timer"></div>
+<div id="progress"></div>
+
+<script>
+const workouts = {
+  fullBody: ["Jump Squats","Push-ups","Mountain Climbers","Dumbbell Rows","Plank","Lunges","Burpees","Shoulder Press","Bicycle Crunches","High Knees"],
+  hiit: ["Burpees","High Knees","Jump Lunges","Mountain Climbers","Jump Squats","Push-ups","Plank Jacks","Sprint in Place","Skater Jumps","Push-up to Plank"],
+  strength: ["Deadlifts","Squats","Bench Press","Shoulder Press","Pull-ups","Rows","Lunges","Bicep Curls","Tricep Dips","Plank"],
+  cardio: ["Jumping Jacks","High Knees","Butt Kickers","Mountain Climbers","Skaters","Sprint in Place","Jump Rope","Burpees","Fast Feet","Jump Lunges"]
+};
+
+let currentWorkout = [];
+let currentExercise = 0;
+let timeLeft = 60;
+let restTime = 15;
+let resting = false;
+let interval;
+
+function startWorkout() {
+  const workoutSelect = document.getElementById("workoutType").value;
+  currentWorkout = workouts[workoutSelect];
+  currentExercise = 0;
+  resting = false;
+  startExercise();
+}
+
+function startExercise() {
+  if (currentExercise >= currentWorkout.length) {
+    document.getElementById("exercise").innerText = "Workout Complete!";
+    document.getElementById("timer").innerText = "";
+    document.getElementById("progress").innerText = "";
+    return;
+  }
+
+  resting = false;
+  timeLeft = 60;
+  document.getElementById("exercise").innerText = currentWorkout[currentExercise];
+  document.getElementById("progress").innerText =
+    "Exercise " + (currentExercise+1) + " of " + currentWorkout.length;
+  runTimer();
+}
+
+function runTimer() {
+  clearInterval(interval);
+  interval = setInterval(() => {
+    document.getElementById("timer").innerText = timeLeft;
+    timeLeft--;
+    if (timeLeft < 0) {
+      if (!resting) {
+        resting = true;
+        timeLeft = restTime;
+        document.getElementById("exercise").innerText = "Rest";
+      } else {
+        currentExercise++;
+        startExercise();
+      }
+    }
+  }, 1000);
+}
+</script>
+
+</body>
+</html>
